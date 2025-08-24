@@ -1,0 +1,52 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<link rel="stylesheet" href="css/home.css">
+
+
+<div class="home-first">
+    <div class="home slide-in-left">
+        @* <div class="home-head">
+            SO, YOU WANT TO TRAVEL TO
+        </div> *@
+        <div class="main-head">
+            <p class="typewriter" style="caret-color: transparent;">Satellite Anomaly Detection</p>
+        </div>
+        <div class="home-explanation">
+            <p class="typewritersec" style="caret-color: transparent;">This project performs real-time anomaly detection on satellite telemetry data.</p>
+        </div>
+
+        <div>
+            <NavLink class="btn btn-light custom-btn" href="/interface">
+                Start
+            </NavLink>
+        </div>
+
+    </div>
+
+    <div class="sateliite-image">
+        <img src="images/satellite.png" alt="satellite" style="caret-color: transparent;">
+    </div>
+
+
+
+
+</div>
+
+@code {
+
+    private bool isStart = false;
+
+    public void StartApp()
+    {
+        if (isStart == false)
+        {
+            isStart = true;
+        }
+    }
+
+
+
+
+}

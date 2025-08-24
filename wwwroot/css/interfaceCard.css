@@ -1,0 +1,58 @@
+.table-responsive {
+    max-height: 500px;
+    overflow-y: auto;
+    margin-bottom: 100px;
+}
+
+#database_table tbody tr:hover {
+    background-color: #000000;
+    color: aliceblue;
+}
+
+#database_table th,
+#database_table td {
+    white-space: nowrap;
+}
+
+.cm-input {
+    border: none;
+}
+
+.s2 {
+    height: 590px;
+    overflow-y: auto;
+}
+
+.s2::-webkit-scrollbar {
+    width: 5px;
+    height: 5px; 
+}
+
+.s2::-webkit-scrollbar-thumb {
+    background-color: aliceblue; 
+    border-radius: 5px;
+}
+
+.s2::-webkit-scrollbar-thumb:hover {
+    background-color: aliceblue; 
+}
+
+.s2::-webkit-scrollbar-track {
+    background-color: black; 
+}
+
+
+#database_table {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    color: aliceblue;
+}
+
+#database_table th, #database_table td {
+    min-width: 120px;
+    max-width: 200px;
+    word-wrap: break-word;
+    padding: 8px 6px;    
+    line-height: 18px;    
+    text-align: center;
+}

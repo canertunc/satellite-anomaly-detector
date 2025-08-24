@@ -1,0 +1,105 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow: hidden; 
+    background-color: black;
+}
+
+.interface-card-table-main-div {
+    border: 3px solid #00ff00;       
+    box-shadow: 0 0 10px #00ff00,    
+                0 0 20px #00ff00,
+                0 0 30px #00ff00;
+}
+
+:root{
+  --btn-bg: #fff;
+  --btn-fg: #111;
+  --btn-border: #ddd;
+}
+
+.btn-thin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40%;              
+  height: 20px;             
+  padding: 0 18px;          
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  border: 1px solid var(--btn-border);
+  border-radius: 12px;      
+  font: 500 14px/1 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  cursor: pointer;
+  transition: box-shadow .15s ease, transform .05s ease, border-color .15s ease;
+  text-decoration: none;
+}
+
+.btn-thin:hover {
+    background-color: black; 
+    color: aliceblue;       
+}
+
+
+.btn-thin:active {
+  transform: translateY(1px);
+}
+
+.btn-thin:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+.btn-thin[disabled],
+.btn-thin:disabled {
+  opacity: .6;
+  pointer-events: none;
+}
+
+.personal-logo {
+    margin-top: 40px;
+    width: 70px;
+    height: 70px;
+}
+
+
+.scroll-container {
+    max-height: 550px; 
+    overflow-y: auto; 
+    background-color: black; 
+    padding: 10px;
+    border-radius: 10px; 
+    margin-left: 40px;
+    margin-top: 30px;
+}
+
+.input-block {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.input-block label {
+    color: aliceblue;
+    font-size: 0.7rem; 
+    width: 100px; 
+}
+
+.input-block input {
+    padding: 5px 10px;
+    font-size: 0.7rem; 
+    border-radius: 8px; 
+    border: 1px solid #ccc;
+    outline: none;
+    width: 60px;
+    height: 15px;
+}
+
+.input-block input:focus {
+    border-color: #4caf50;
+    box-shadow: 0 0 3px #4caf50;
+}
+

@@ -1,0 +1,336 @@
+@page "/interface"
+@using System.Globalization
+@using Microsoft.EntityFrameworkCore
+@inject HttpClient Http
+@inject AppDbContext Db
+@rendermode InteractiveServer
+<PageTitle>Interface</PageTitle>
+
+<link rel="stylesheet" href="css/interface.css">
+
+<div class="container-fluid p-0 m-0 vh-100">
+    <div class="row g-0 h-100">
+
+        <div class="col-10 d-flex flex-column">
+            <div class="flex-fill bg-black interface-card-table-main-div" style="height: 460px;">
+
+                <InterfaceCard TelemetryLabeleds="telemetryList" IsClickedFix = "isClickedFix" />
+
+            </div>
+
+            <div class="flex-fill" style="color: aliceblue;height:70px;">
+                <div style="display:@(isClickedStart ? "relative" : "none"); gap: 1px; margin-top:35px;">
+                    @for (int i = 0; i < 6; i++)
+                    {
+                        <video style="caret-color: transparent;" src="images/capture.webm" width="200" autoplay loop muted
+                            playsinline></video>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-2 d-flex flex-column">
+            <div class="flex-fill bg-black">
+                <div class="d-flex justify-content-center align-items-center">
+                    <img class="personal-logo" src="images/personal-logo.jpg" alt="personal-logo"
+                        style="caret-color: transparent;">
+                </div>
+                @if (!isClickedAdd)
+                {
+                    <div style="margin-top: 160px;">
+                        <div class="d-flex justify-content-center align-items-center mt-3"><button @onclick="() => isClickedFix = !isClickedFix"
+                                class="btn-thin">Fix
+                                Label</button></div>
+                        <div class="d-flex justify-content-center align-items-center mt-3"><button @onclick="sendAll"
+                                class="btn-thin">Send
+                                All</button></div>
+                        <div class="d-flex justify-content-center align-items-center mt-3"><button @onclick="clearAll"
+                                class="btn-thin">Clear
+                                All</button></div>
+                        <div class="d-flex justify-content-center align-items-center mt-3"><button @onclick="showAdding"
+                                class="btn-thin" style="font-size: 11px;">Manual
+                                Detect</button>
+                        </div>
+                        <div style="margin-top: 80px;">
+                            <div class="d-@(isClickedStart == true ? "flex" : "none") justify-content-center align-items-center mt-3"
+                                style="margin-bottom: 40px;">
+                                @* <i class="fa-solid fa-magnifying-glass-chart fa-bounce fa-xl" style="color: #25b136;"></i> *@
+                                <img src="images/radar.gif" alt="Anomaly Detection"
+                                    style="width:70px; height:auto;caret-color: transparent;" />
+
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center mt-3"><button
+                                    @onclick="startDetection"
+                                    class="btn btn-@(isClickedStart == true ? "success" : "outline-success")">
+                                    @(isClickedStart ? "Scanning" : "Start Detection")
+
+                                </button></div>
+                            <div class="d-flex justify-content-center align-items-center mt-3"><button
+                                    @onclick="stopDetection"
+                                    class="btn btn-@(isClickedStop == true ? "danger" : "outline-danger")">
+                                    @(isClickedStop ? "Stopped" : "Stop Detection")
+                                </button></div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+
+                    <div class="scroll-container">
+
+                        @foreach (var key in propertyNames!)
+                        {
+                            <div class="input-block">
+                                <label for="@key">@key</label>
+                                <input type="text" id="@key" name="@key"
+                                    value="@featureValues[key]?.ToString("G17", CultureInfo.InvariantCulture)"
+                                    @oninput="@(e => featureValues[key] = e.Value is string s ? ParseDouble(s) : null)" />
+                            </div>
+                        }
+
+                        <div class="d-flex justify-content-center align-items-center mt-4">
+                            <button @onclick="detectAnomalyManually" class="btn-thin"
+                                style="width: 110px;font-size:11px">Add &
+                                Detect
+                            </button>
+                            <button @onclick="() => isClickedAdd = false" class="btn-thin"
+                                style="width: 50px;font-size:11px;margin-left: 5px;margin-right: 15px;">Back
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool isClickedStart = false;
+    private bool isClickedAdd = false;
+    private bool isClickedStop = false;
+    public bool isClickedFix = false;
+    private List<TelemetryLabeled> telemetryList = new();
+    private TelemetryLabeled telemetryLabeled = new TelemetryLabeled();
+
+    private Dictionary<string, double?> featureValues = new Dictionary<string, double?>
+{
+{ "Mean", null },
+{ "Var", null },
+{ "Std", null },
+{ "Len", null },
+{ "Duration", null },
+{ "Len_Weighted", null },
+{ "Gaps_Squared", null },
+{ "N_Peaks", null },
+{ "Smooth10_N_Peaks", null },
+{ "Smooth20_N_Peaks", null },
+{ "Var_Div_Duration", null },
+{ "Var_Div_Len", null },
+{ "Diff_Peaks", null },
+{ "Diff2_Peaks", null },
+{ "Diff_Var", null },
+{ "Diff2_Var", null },
+{ "Kurtosis", null },
+{ "Skew", null }
+};
+
+
+    private async Task sendAll()
+    {
+
+        if (telemetryList != null)
+        {
+
+            foreach (TelemetryLabeled tl in telemetryList)
+            {
+                var trainingEntity = tl.ToTraining();
+
+                var existing = await Db.TelemetyTrainings
+                .FirstOrDefaultAsync(x => x.Segment == trainingEntity.Segment);
+                if (existing == null)
+                {
+                    await Db.TelemetyTrainings.AddAsync(trainingEntity);
+                }
+            }
+            await Db.SaveChangesAsync();
+        }
+    }
+
+    private async Task clearAll()
+    {
+        if (telemetryList != null && telemetryList.Any())
+        {
+            Db.TelemetyLabeleds.RemoveRange(telemetryList);
+            await Db.SaveChangesAsync();
+
+            telemetryList.Clear();
+            StateHasChanged();
+        }
+    }
+
+
+
+    private async Task startDetection()
+    {
+        isClickedStop = false;
+        isClickedStart = true;
+
+        while (isClickedStart)
+        {
+
+            var newData = await Db.TelemetryRaws
+            .ToListAsync();
+
+            foreach (var item in newData)
+            {
+                var telemetryLabeled = new TelemetryLabeled();
+                var currentFeatures = featureValues.ToDictionary(k => k.Key, k => (double?)null);
+
+                foreach (var prop in typeof(TelemetryLabeled).GetProperties())
+                {
+                    if (prop.Name == "Segment" || prop.Name == "Anomaly" || prop.Name == "Timestamp") continue;
+                    var value = item.GetType().GetProperty(prop.Name)?.GetValue(item);
+                    if (value != null) currentFeatures[prop.Name] = Convert.ToDouble(value);
+                    prop.SetValue(telemetryLabeled, value);
+                }
+
+                var input = new { values = currentFeatures.Values.Select(v => v ?? 0.0).ToList() };
+                var response = await Http.PostAsJsonAsync("http://9.223.178.203:5001/predict", input);
+                var result = await response.Content.ReadFromJsonAsync<Dictionary<string, int>>();
+                if (result != null)
+                {
+                    telemetryLabeled.Anomaly = result["prediction"];
+                    var lastSegment = (await Db.TelemetyLabeleds.OrderByDescending(t => t.Segment).FirstOrDefaultAsync())?.Segment ?? 0;
+                    telemetryLabeled.Timestamp = DateTime.UtcNow;
+                    telemetryLabeled.Segment = long.Parse(telemetryLabeled.Timestamp.ToString("yyyyMMddHHmmssfff"));
+                }
+
+                await Db.TelemetyLabeleds.AddAsync(telemetryLabeled);
+                Db.TelemetryRaws.Remove(item);
+
+                await Task.Delay(1000);
+                telemetryList.Add(telemetryLabeled);
+                StateHasChanged();
+            }
+            await Db.SaveChangesAsync();
+        }
+    }
+    private void stopDetection()
+    {
+        isClickedStart = false;
+        isClickedStop = true;
+    }
+
+    private void showAdding()
+    {
+        isClickedAdd = true;
+    }
+
+
+
+    private double? ParseDouble(string s)
+    {
+        if (string.IsNullOrWhiteSpace(s))
+            return null;
+
+        s = s.Replace(",", ".");
+        if (double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
+            return result;
+
+        return null;
+    }
+
+
+
+    private List<string>? propertyNames;
+
+    protected override void OnInitialized()
+    {
+
+        var excluded = new List<string> { "Anomaly", "Timestamp", "Segment" };
+
+        propertyNames = typeof(TelemetryLabeled)
+        .GetProperties()
+        .Where(p => !excluded.Contains(p.Name))
+        .Select(p => p.Name)
+        .ToList();
+
+
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        telemetryList = await Db.TelemetyLabeleds.ToListAsync();
+    }
+
+
+    private async Task detectAnomalyManually()
+    {
+
+        var props = telemetryLabeled.GetType().GetProperties();
+        foreach (var prop in props)
+        {
+            if (featureValues.ContainsKey(prop.Name) && featureValues[prop.Name].HasValue)
+            {
+                prop.SetValue(telemetryLabeled, (float)featureValues[prop.Name]!.Value);
+
+            }
+        }
+        var input = new
+        {
+            values = featureValues.Values
+        .Select(v => v ?? 0.0)
+        .ToList()
+        };
+
+        var response = await Http.PostAsJsonAsync("http://9.223.178.203:5001/predict", input);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"HTTP error: {response.StatusCode}");
+        }
+        var result = await response.Content.ReadFromJsonAsync<Dictionary<string, int>>();
+        int prediction;
+        if (result != null)
+        {
+            prediction = result["prediction"];
+            var anomalyProp = telemetryLabeled.GetType().GetProperty("Anomaly");
+            if (anomalyProp != null)
+                anomalyProp.SetValue(telemetryLabeled, (float)prediction);
+
+            float lastSegment = 0;
+            var lastTelemetry = await Db.TelemetyLabeleds
+            .OrderByDescending(t => t.Segment)
+            .FirstOrDefaultAsync();
+
+            if (lastTelemetry != null)
+                lastSegment = lastTelemetry.Segment;
+
+            var timestampProp = telemetryLabeled.GetType().GetProperty("Timestamp");
+            if (timestampProp != null)
+                timestampProp.SetValue(telemetryLabeled, DateTime.UtcNow);
+            isClickedAdd = false;
+
+            var segmentProp = telemetryLabeled.GetType().GetProperty("Segment");
+            if (segmentProp != null)
+            {
+                segmentProp.SetValue(telemetryLabeled,
+                long.Parse(telemetryLabeled.Timestamp.ToString("yyyyMMddHHmmssfff")));
+            }
+
+        }
+        else
+        {
+            throw new Exception($"HTTP error: {response.StatusCode}");
+        }
+
+
+        await Db.TelemetyLabeleds.AddAsync(telemetryLabeled);
+        await Db.SaveChangesAsync();
+        telemetryList = await Db.TelemetyLabeleds.ToListAsync();
+
+        StateHasChanged();
+    }
+
+}

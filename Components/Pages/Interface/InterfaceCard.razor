@@ -1,0 +1,90 @@
+@inject AppDbContext Db
+<PageTitle>InterfaceCard</PageTitle>
+<link rel="stylesheet" href="css/interfaceCard.css">
+
+<div class="container mt-5 mb-5">
+    <div class="table-responsive shadow-sm rounded s2" style="max-height: 515px; overflow-y: auto;">
+        <table id="database_table" class="table table-hover align-middle">
+            <thead class="table-black" style="color: aliceblue;">
+                <tr>
+                    <th>Segment</th>
+                    <th>Anomaly</th>
+                    <th>Timestamp</th>
+                    <th>Duration</th>
+                    <th>Len</th>
+                    <th>Mean</th>
+                    <th>Var</th>
+                    <th>Std</th>
+                    <th>Kurtosis</th>
+                    <th>Skew</th>
+                    <th>N_peaks</th>
+                    <th>Smooth10_N_Peaks</th>
+                    <th>Smooth20_N_Peaks</th>
+                    <th>Diff_Peaks</th>
+                    <th>Diff2_Peaks</th>
+                    <th>Diff_Var</th>
+                    <th>Diff2_Var</th>
+                    <th>Gaps_Squared</th>
+                    <th>Len_Weighted</th>
+                    <th>Var_Div_Duration</th>
+                    <th>Var_Div_Len</th>
+                </tr>
+            </thead>
+            <tbody style="color: aliceblue;">
+                @foreach (TelemetryLabeled tl in TelemetryLabeleds.AsEnumerable().Reverse())
+                {
+                    <tr style="background-color:@(tl.Anomaly == 1 ? "red" : "#3cd74e")">
+
+                        <td>@tl.Segment</td>
+                        <td><i class="fa-solid fa-bolt fa-fade" style="color: #1c1e21;cursor:pointer;display:@(IsClickedFix ? "fixed" : "none")"
+                                @onclick="() => Fix(tl.Segment)"></i>@tl.Anomaly</td>
+                        <td>@tl.Timestamp</td>
+                        <td>@tl.Duration</td>
+                        <td>@tl.Len</td>
+                        <td>@tl.Mean</td>
+                        <td>@tl.Var</td>
+                        <td>@tl.Std</td>
+                        <td>@tl.Kurtosis</td>
+                        <td>@tl.Skew</td>
+                        <td>@tl.N_Peaks</td>
+                        <td>@tl.Smooth10_N_Peaks</td>
+                        <td>@tl.Smooth20_N_Peaks</td>
+                        <td>@tl.Diff_Peaks</td>
+                        <td>@tl.Diff2_Peaks</td>
+                        <td>@tl.Diff_Var</td>
+                        <td>@tl.Diff2_Var</td>
+                        <td>@tl.Gaps_Squared</td>
+                        <td>@tl.Len_Weighted</td>
+                        <td>@tl.Var_Div_Duration</td>
+                        <td>@tl.Var_Div_Len</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@code {
+
+    [Parameter]
+    public List<TelemetryLabeled> TelemetryLabeleds { get; set; } = new();
+
+    [Parameter]
+    public bool IsClickedFix { get; set; } = false;
+
+    public async Task Fix(long id)
+    {
+        var item = TelemetryLabeleds.FirstOrDefault(t => t.Segment == id);
+        if (item != null)
+        {
+            item.Anomaly = item.Anomaly == 1 ? 0 : 1;
+
+            Db.TelemetyLabeleds.Update(item);
+            await Db.SaveChangesAsync();
+
+            StateHasChanged();
+        }
+    }
+
+}
