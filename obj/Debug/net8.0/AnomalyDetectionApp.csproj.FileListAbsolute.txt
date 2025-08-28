@@ -91,6 +91,7 @@ C:\Users\caner\Desktop\anomaly_Detection_blazor\AnomalyDetectionApp\obj\Debug\ne
 C:\Users\caner\Desktop\anomaly_Detection_blazor\AnomalyDetectionApp\obj\Debug\net8.0\AnomalyDetectionApp.AssemblyInfo.cs
 C:\Users\caner\Desktop\anomaly_Detection_blazor\AnomalyDetectionApp\obj\Debug\net8.0\AnomalyDetectionApp.csproj.CoreCompileInputs.cache
 C:\Users\caner\Desktop\anomaly_Detection_blazor\AnomalyDetectionApp\obj\Debug\net8.0\AnomalyDetectionApp.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\caner\Desktop\anomaly_Detection_blazor\AnomalyDetectionApp\obj\Debug\net8.0\AnomalyDetectionApp.sourcelink.json
 C:\Users\caner\Desktop\anomaly_Detection_blazor\AnomalyDetectionApp\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\caner\Desktop\anomaly_Detection_blazor\AnomalyDetectionApp\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\caner\Desktop\anomaly_Detection_blazor\AnomalyDetectionApp\obj\Debug\net8.0\staticwebassets\msbuild.AnomalyDetectionApp.Microsoft.AspNetCore.StaticWebAssets.props

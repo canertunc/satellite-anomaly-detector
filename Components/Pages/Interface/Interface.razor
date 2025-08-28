@@ -40,16 +40,16 @@
                 @if (!isClickedAdd)
                 {
                     <div style="margin-top: 160px;">
-                        <div class="d-flex justify-content-center align-items-center mt-3"><button @onclick="() => isClickedFix = !isClickedFix"
+                        <div class="d-@(isClickedStart == true ? "none" : "flex")  justify-content-center align-items-center mt-3"><button @onclick="() => isClickedFix = !isClickedFix"
                                 class="btn-thin">Fix
                                 Label</button></div>
-                        <div class="d-flex justify-content-center align-items-center mt-3"><button @onclick="sendAll"
+                        <div class="d-@(isClickedStart == true ? "none" : "flex") justify-content-center align-items-center mt-3"><button @onclick="sendAll"
                                 class="btn-thin">Send
                                 All</button></div>
-                        <div class="d-flex justify-content-center align-items-center mt-3"><button @onclick="clearAll"
+                        <div class="d-@(isClickedStart == true ? "none" : "flex") justify-content-center align-items-center mt-3"><button @onclick="clearAll"
                                 class="btn-thin">Clear
                                 All</button></div>
-                        <div class="d-flex justify-content-center align-items-center mt-3"><button @onclick="showAdding"
+                        <div class="d-@(isClickedStart == true ? "none" : "flex") justify-content-center align-items-center mt-3"><button @onclick="showAdding"
                                 class="btn-thin" style="font-size: 11px;">Manual
                                 Detect</button>
                         </div>
