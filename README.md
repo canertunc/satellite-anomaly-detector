@@ -103,7 +103,7 @@ Uygulama aşağıdaki telemetri özelliklerini analiz eder:
 ## 🤖 Makine Öğrenmesi Modeli
 
 ### Model Mimarisi
-Bu projede **FCNN (Fully Connected Neural Network)** mimarisi kullanılarak geliştirilen özel bir anomali tespit modeli kullanılmaktadır. Model, [OPSSAT-AD veri seti](https://zenodo.org/records/15108715) kullanılarak eğitilmiştir.
+Bu projede **FCNN (Fully Connected Neural Network)** mimarisi kullanılarak geliştirilen özel bir anomali tespit modeli kullanılmaktadır. Model, [OPSSAT-AD veri seti](https://zenodo.org/records/15108715) kullanılarak eğitilmiştir. Notebooks klasörü altında yer alan fcnn.ipynb dosyasında, FCNN mimarisiyle eğittiğim geliştirme kodlarına ulaşabilirsiniz.
 
 ### Veri Seti
 Proje, Avrupa Uzay Ajansı (ESA) tarafından işletilen OPS-SAT CubeSat misyonundan elde edilen telemetri verilerini içeren **OPSSAT-AD** veri setini kullanmaktadır. Bu veri seti:
@@ -169,6 +169,8 @@ AnomalyDetectionApp/
 │   └── TelemetryTrainingModel.cs
 ├── Migrations/
 ├── Helpers/
+├── notebooks/
+│   └── fcnn.ipynb
 ├── Hubs/
 └── wwwroot/
     ├── css/
